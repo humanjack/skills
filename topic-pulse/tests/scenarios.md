@@ -13,8 +13,8 @@ Run them top to bottom on a fresh machine (or after `seen/<slug>.json` is cleare
 | T6  | Add source                     | `/topic-pulse --add-source hackernews` then T5                | hackernews enabled in config; persisted to disk |
 | T7  | Remove source                  | `/topic-pulse --remove-source reddit` then T5                 | reddit disabled; persisted; T8 next run does not collect from reddit |
 | T8  | Refuse last-source disable     | disable everything except one, then `--remove-source <last>`  | Skill refuses with a clear message; config unchanged |
-| T9  | Reset seen                     | `/topic-pulse "AI agents" --reset`                            | `Skipped: 0` even after T2; `seen/ai-agents.json` deleted |
-| T10 | Include-seen                   | `/topic-pulse "AI agents" --include-seen` (after T2)          | Includes prior items; index file unchanged in size after run |
+| T9  | Reset seen                     | `/topic-pulse "AI agents" --reset`                            | `Skipped: 0` even after T2; post-run index contains only items collected this run (none of T1/T2's prior items) |
+| T10 | Include-seen                   | `/topic-pulse "AI agents" --include-seen` (after T2)          | At least one previously-seen item from T1 reappears in Stories |
 | T11 | Weekly window                  | `/topic-pulse "AI agents" --window 7d`                        | Items span > 24h timestamps; framing in Signal reflects week, not day |
 | T12 | Ambiguous topic                | `/topic-pulse Apple`                                          | Asks one clarifying question, does not collect, does not write to seen |
 | T13 | Transcript fallback            | force a video without captions (use a known no-caption ID)    | Cluster ends with `(transcript unavailable)`; summary derives from title/description |
@@ -24,7 +24,7 @@ Run them top to bottom on a fresh machine (or after `seen/<slug>.json` is cleare
 
 ## How to run a test
 
-1. Note current seen-index state: `python3 lib/seen.py load <slug>`
+1. Note current seen-index state: `python3 topic-pulse/lib/seen.py load <slug>` (run from repo root)
 2. Invoke the command in Claude Code
 3. Check pass criteria
 4. Record outcome (✓/✗ + notes) in `eval-results.md` (gitignored)

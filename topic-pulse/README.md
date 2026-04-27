@@ -5,7 +5,7 @@ news outlets; dedupes against prior runs; produces an opinionated brief in ~500 
 
 ## Usage
 
-```
+```text
 /topic-pulse <topic>
 /topic-pulse "AI agents"
 /topic-pulse "Federal Reserve" --window 7d
@@ -25,13 +25,13 @@ news outlets; dedupes against prior runs; produces an opinionated brief in ~500 
 
 ## Persistence
 
-Per-topic seen-index lives at `~/.claude/topic-pulse/seen/<slug>.json`. Re-running the same
-topic the same day skips items already summarized in prior runs and reports `Skipped: N` in
-the header. Entries older than 90 days are pruned automatically.
+Per-topic seen-index lives at `~/.claude/topic-pulse/seen/<slug>.json`. Re-running a topic
+skips items already present in the persisted seen index (regardless of calendar day) and
+reports `Skipped: N` in the header. Entries older than 90 days are pruned automatically.
 
 ## Sample output
 
-```
+```markdown
 # Today · AI agents · 2026-04-27
 Sources: web, news, hackernews, reddit, youtube · Window: 24h · New: 7 · Skipped: 3
 

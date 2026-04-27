@@ -11,7 +11,7 @@ YouTube videos relevant to the topic, summarized from transcript when available.
 ## Procedure
 
 1. Search for videos:
-   ```
+   ```text
    WebSearch: <topic> site:youtube.com after:<YYYY-MM-DD>
    ```
    Take the top 8 `youtube.com/watch?v=<id>` results. Extract the `v` parameter as `video_id`.
@@ -26,8 +26,8 @@ YouTube videos relevant to the topic, summarized from transcript when available.
    ```bash
    python3 lib/yt_transcript.py <video_id>
    ```
-   - Exit 0 + non-empty stdout → use as transcript.
-   - Non-zero exit or empty stdout → mark `transcript_unavailable: true` and fall back to
+   - Exit 0 + non-empty stdout → use as transcript (`transcript_available: true`).
+   - Non-zero exit or empty stdout → mark `transcript_available: false` and fall back to
      description + title for the summary.
 
 4. Emit:

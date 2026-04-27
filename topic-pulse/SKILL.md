@@ -14,7 +14,7 @@ dedupe across runs (persistent seen-index), cluster, summarize, analyze.
 
 ## Invocation
 
-```
+```text
 /topic-pulse <topic>                          # default: all enabled sources, last 24h
 /topic-pulse "<topic>" --window 7d            # weekly rollup
 /topic-pulse <topic> --sources youtube        # one source only
@@ -87,7 +87,7 @@ notable activity was N days ago").
 
 ## Output format
 
-```
+```markdown
 # Today · <topic> · <YYYY-MM-DD>
 Sources: <a, b, c> · Window: <24h|7d> · New: <N> · Skipped (already seen): <M>
 
@@ -133,9 +133,14 @@ Read the relevant adapter file before collecting from that source.
 
 ## Helpers
 
-- `lib/slug.py` — `python3 lib/slug.py "<topic>"` → slug on stdout
-- `lib/seen.py` — `python3 lib/seen.py load|filter|append|prune|reset <slug> [args]`
-- `lib/yt_transcript.py` — `python3 lib/yt_transcript.py <video_id_or_url>` → transcript text on stdout, empty + non-zero exit on failure
+All helper invocations below assume the working directory is the **skill root** (the
+directory containing this `SKILL.md`). Either `cd` to it first via `Bash`, or substitute
+the absolute path the SKILL.md was loaded from. Do not invoke them with bare `lib/...`
+from an arbitrary cwd — they will not be found.
+
+- `lib/slug.py` — `python3 <skill-root>/lib/slug.py "<topic>"` → slug on stdout
+- `lib/seen.py` — `python3 <skill-root>/lib/seen.py load|filter|append|prune|reset <slug> [args]`
+- `lib/yt_transcript.py` — `python3 <skill-root>/lib/yt_transcript.py <video_id_or_url>` → transcript text on stdout, empty + non-zero exit on failure
 
 Use these via the `Bash` tool. They are intentionally tiny and stdlib-only where possible
 (`yt_transcript.py` will `pip install --user youtube-transcript-api` on first use if missing).

@@ -11,7 +11,7 @@ business). For niche tech topics, this adapter often returns little — that's f
 ## Procedure
 
 1. Run `WebSearch` with the topic and an OR of `site:` filters across major outlets:
-   ```
+   ```text
    <topic> (site:reuters.com OR site:apnews.com OR site:bbc.com OR site:bloomberg.com
             OR site:wsj.com OR site:nytimes.com OR site:ft.com OR site:axios.com
             OR site:cnbc.com OR site:theguardian.com) after:<YYYY-MM-DD>

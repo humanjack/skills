@@ -23,14 +23,22 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 
 ROOT = pathlib.Path(os.path.expanduser("~/.claude/topic-pulse/seen"))
 PRUNE_DAYS = 90
+SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+
+def validate_slug(slug: str) -> None:
+    if not SLUG_RE.fullmatch(slug):
+        raise ValueError(f"invalid slug: {slug!r}")
 
 
 def index_path(slug: str) -> pathlib.Path:
+    validate_slug(slug)
     return ROOT / f"{slug}.json"
 
 
@@ -64,7 +72,9 @@ def prune(entries: list[dict]) -> list[dict]:
             continue
         try:
             seen_at = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-        except ValueError:
+            if seen_at.tzinfo is None:
+                continue
+        except (ValueError, TypeError):
             continue
         if seen_at >= cutoff:
             out.append(e)
@@ -77,7 +87,9 @@ def cmd_load(slug: str) -> None:
 
 def cmd_filter(slug: str) -> None:
     items = json.load(sys.stdin)
-    seen_ids = {e["id"] for e in load(slug) if "id" in e}
+    entries = prune(load(slug))
+    save(slug, entries)
+    seen_ids = {e["id"] for e in entries if "id" in e}
     fresh = [it for it in items if it.get("id") not in seen_ids]
     print(json.dumps(fresh, indent=2))
 
@@ -127,6 +139,11 @@ def main(argv: list[str]) -> int:
         print(__doc__, file=sys.stderr)
         return 2
     cmd, slug = argv[1], argv[2]
+    try:
+        validate_slug(slug)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
     handlers = {
         "load": cmd_load,
         "filter": cmd_filter,

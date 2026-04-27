@@ -25,7 +25,8 @@ def extract_video_id(arg: str) -> str | None:
     except ValueError:
         return None
     if u.hostname in ("youtu.be",):
-        return u.path.lstrip("/")[:11] or None
+        vid = u.path.lstrip("/")[:11]
+        return vid if len(vid) == 11 else None
     if u.hostname and "youtube.com" in u.hostname:
         if u.path == "/watch":
             v = parse_qs(u.query).get("v", [None])[0]
