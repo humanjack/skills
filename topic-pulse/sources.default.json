@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "sources": {
+    "web":        { "enabled": true,  "adapter": "sources/web.md" },
+    "news":       { "enabled": true,  "adapter": "sources/news.md" },
+    "hackernews": { "enabled": true,  "adapter": "sources/hackernews.md" },
+    "reddit":     { "enabled": true,  "adapter": "sources/reddit.md" },
+    "youtube":    { "enabled": true,  "adapter": "sources/youtube.md" }
+  }
+}
