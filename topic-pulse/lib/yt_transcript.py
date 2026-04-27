@@ -16,22 +16,25 @@ import subprocess
 import sys
 from urllib.parse import parse_qs, urlparse
 
+VIDEO_ID_RE = re.compile(r"[A-Za-z0-9_-]{11}")
+
 
 def extract_video_id(arg: str) -> str | None:
-    if re.fullmatch(r"[A-Za-z0-9_-]{11}", arg):
+    if VIDEO_ID_RE.fullmatch(arg):
         return arg
     try:
         u = urlparse(arg)
     except ValueError:
         return None
-    if u.hostname in ("youtu.be",):
-        vid = u.path.lstrip("/")[:11]
-        return vid if len(vid) == 11 else None
-    if u.hostname and "youtube.com" in u.hostname:
+    host = (u.hostname or "").lower()
+    if host == "youtu.be":
+        seg = u.path.lstrip("/").split("/", 1)[0]
+        return seg if VIDEO_ID_RE.fullmatch(seg) else None
+    if host == "youtube.com" or host.endswith(".youtube.com"):
         if u.path == "/watch":
             v = parse_qs(u.query).get("v", [None])[0]
-            return v if v and len(v) == 11 else None
-        m = re.match(r"^/(?:embed|shorts|live)/([A-Za-z0-9_-]{11})", u.path)
+            return v if v and VIDEO_ID_RE.fullmatch(v) else None
+        m = re.match(r"^/(?:embed|shorts|live)/([A-Za-z0-9_-]{11})(?:$|/)", u.path)
         if m:
             return m.group(1)
     return None
