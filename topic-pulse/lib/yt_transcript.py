@@ -53,16 +53,23 @@ def ensure_dep() -> None:
 
 
 def fetch(video_id: str) -> str:
-    from youtube_transcript_api import YouTubeTranscriptApi  # type: ignore
-
     try:
-        chunks = YouTubeTranscriptApi.get_transcript(video_id, languages=["en", "en-US", "en-GB"])
-    except Exception:
+        from youtube_transcript_api import (  # type: ignore
+            YouTubeTranscriptApi,
+            YouTubeTranscriptApiException,
+        )
+    except ImportError:
+        return ""
+
+    api = YouTubeTranscriptApi()
+    try:
+        transcript = api.fetch(video_id, languages=("en", "en-US", "en-GB"))
+    except (YouTubeTranscriptApiException, OSError):
         try:
-            chunks = YouTubeTranscriptApi.get_transcript(video_id)
-        except Exception:
+            transcript = api.fetch(video_id)
+        except (YouTubeTranscriptApiException, OSError):
             return ""
-    return " ".join(c.get("text", "").strip() for c in chunks if c.get("text"))
+    return " ".join(s.text.strip() for s in transcript if s.text)
 
 
 def main(argv: list[str]) -> int:
@@ -73,7 +80,7 @@ def main(argv: list[str]) -> int:
         return 1
     try:
         ensure_dep()
-    except Exception:
+    except (subprocess.CalledProcessError, OSError):
         return 1
     text = fetch(vid)
     if not text:
