@@ -42,12 +42,16 @@ def extract_video_id(arg: str) -> str | None:
 
 def ensure_dep() -> None:
     try:
-        import youtube_transcript_api  # noqa: F401
-        return
-    except ImportError:
+        from youtube_transcript_api import YouTubeTranscriptApi  # type: ignore
+        if hasattr(YouTubeTranscriptApi, "fetch"):
+            return
+    except (ImportError, AttributeError):
         pass
     subprocess.run(
-        [sys.executable, "-m", "pip", "install", "--quiet", "--user", "youtube-transcript-api"],
+        [
+            sys.executable, "-m", "pip", "install", "--quiet", "--user",
+            "--upgrade", "youtube-transcript-api>=1.0.0,<2",
+        ],
         check=True,
     )
 
